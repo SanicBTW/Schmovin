@@ -17,8 +17,6 @@ There's also...
 
 In fact, a lot of this codebase was written while I was a junior in high school and probably reflects opinions that have changed since then or implements things differently than how I would implement things now, so keep that in mind when trying to browse through this repo's commit history...
 
-I'm pretty sure this is the most up-to-date branch that works with Week 6 code. Also, since you're on this branch, don't try to put more than two playfields lol
-
 ## Original, Not Up-to-Date README
 <h2 align="center">"Those arrows are schmovin'!"</p>
 
@@ -27,9 +25,6 @@ Based heavily on <a href="https://notitg.heysora.net/">NotITG</a>
 Schmovin' is basically an attempt at recreating (and porting) some features of NotITG into Friday Night Funkin' while having its own original code structure. 
 
 If you're already familiar with making NotITG files, it's essentially an ease reader and playfield renderer for FNF that comes with a few debug features!
-
-### Want to start making modfiles?
-I highly recommend reading the [Mods Design Notebook](https://docs.google.com/document/d/1XSSPSpIuE9S20lc3O3WfixzX_G6zYmLmlmJH1e43YN8/edit?usp=sharing) first! It covers plenty of aspects of modfile and game design and will hopefully let you make playable and not competely unreadable files that are... fun!
 
 This repository is also meant to be a Git submodule for Groovin' Mod Framework, but it can also be used in other engines! Just make sure to give appropriate credit.
 

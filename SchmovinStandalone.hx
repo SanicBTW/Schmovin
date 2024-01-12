@@ -1,8 +1,10 @@
 /**
  * @ Author: 4mbr0s3 2
- * @ Create Time: 2021-06-22 11:55:58
- * @ Modified by: 4mbr0s3 2
+ * @ Create Time: 2024-01-12 11:46:28
+ * @ Modified by: sanco
  */
+
+// Mixed some code from `GroovinSchmovinAdapter`
 
 package schmovin;
 
@@ -30,6 +32,8 @@ class SchmovinStandalone
 	private var instance:SchmovinInstance;
 
 	public static var holdNoteSubdivisions:Int = 4;
+	public static var arrowPathSubdivisions:Int = 80;
+	public static var optimizeHoldNotes:Bool = false;
 
 	private function shouldRun():Bool
 	{
@@ -50,7 +54,17 @@ class SchmovinStandalone
 	}
 
 	/**
-	 * Before calling this, make sure to set the SchmovinAdapter instance so Schmovin' properly works.
+	 * Override this to implement your own class that extends SchmovinAdapter
+	 *
+	 * This function is automatically called on `afterCameras`
+	 */
+	private function initializeAdapter()
+	{
+		SchmovinAdapter.setInstance(new SchmovinAdapter());
+	}
+
+	// * Before calling this, make sure to set the SchmovinAdapter instance so Schmovin' properly works.
+	/**
 	 * Call this in PlayState between the following lines:
 	 * 
 	 * FlxG.cameras.reset(camGame);
@@ -60,8 +74,9 @@ class SchmovinStandalone
 	 */
 	public function afterCameras(camGame:FlxCamera, camHUD:FlxCamera)
 	{
-		instance = SchmovinInstance.Create(cast FlxG.state, camGame, camHUD);
+		initializeAdapter();
 
+		instance = SchmovinInstance.Create(cast FlxG.state, camGame, camHUD);
 		instance.initialize();
 	}
 
@@ -133,15 +148,19 @@ class SchmovinStandalone
 
 	/**
 	 * Call this at the start of PlayState.update().
-	 * @param state 
 	 * @param elapsed 
 	 */
-	public function update(state:PlayState, elapsed:Float)
+	public function update(elapsed:Float)
 	{
 		instance.update(elapsed);
-		updateReceptors();
+		//updateReceptors();
+		hideReceptors();
 	}
 
+	/**
+	 * @deprecated Note positioning moved to SchmovinRenderers for multiple playfield support
+	 */
+	@:deprecated
 	private function updateReceptors()
 	{
 		var currentBeat = getCurrentBeat();
@@ -153,13 +172,25 @@ class SchmovinStandalone
 		instance.updateFakeExplosionReceptors();
 	}
 
-	// Taken from GroovinConductor
+	// From GroovinSchmovinAdapter
+	private function hideReceptors()
+	{
+		for (receptorIndex in 0...instance.state.strumLineNotes.length)
+		{
+			// Note positioning moved to SchmovinRenderers for multiple playfield support
+			// This is for updating receptor positions...
+			var receptor = instance.state.strumLineNotes.members[receptorIndex];
+			receptor.visible = false;
+		}
+	}
+
+	// Taken from GroovinConductor - This should be overriden by the dev
 	public static function hasBPMChanges()
 	{
 		return Conductor.bpmChangeMap.length > 0;
 	}
 
-	// Taken from GroovinConductor
+	// Taken from GroovinConductor - This should be overriden by the dev
 	public static function getSortedBPMChanges()
 	{
 		var sortedChanges = Conductor.bpmChangeMap.copy();
@@ -193,11 +224,24 @@ class SchmovinStandalone
 	 * @param daNote 
 	 * @param SONG 
 	 * @return Bool
+	 * @deprecated Note positioning moved to SchmovinRenderers for multiple playfield support
 	 */
+	@:deprecated
 	public function postNotePosition(state:PlayState, strumLine:FlxSprite, daNote:Note, SONG:SwagSong):Bool
 	{
+		/*
 		if (daNote.alive && daNote.visible)
 			instance.timeline.updateNotes(getCurrentBeat(), daNote, daNote.getPlayer());
-		return true;
+		return true;*/
+
+		// Note positioning moved to SchmovinRenderers for multiple playfield support
+
+		if (daNote.alive)
+		{
+			daNote.visible = false;
+			daNote.cameras = [];
+		}
+
+		return true;		
 	}
 }
